@@ -74,9 +74,11 @@ class ExtendedDcrGraph(DistributedDcrGraph):
     
     def nestingUpdate(self, value: Dict[str, Set[str]]):
         # Loop over keys (Condition to key from value)
+
+        print(value)
         for event in set(value.keys()):
             for event_prime in set(value[event]):
-                if event_prime in self.superActivities:
+                if event_prime in self.superActivities: 
                     event_prime_activities = self.superActivities[event_prime]
                     value[event].update(event_prime_activities)
                     value[event].remove(event_prime)
@@ -89,6 +91,19 @@ class ExtendedDcrGraph(DistributedDcrGraph):
                     # Add the e_prime to the event that conditions the superevent
                 # Remove the condition to the superActivity
                 del value[event]   
+        new_set = set()
+        for values in value.values():
+            #print(values)
+            new_set.update(values)
+        # Check for any further nesting, we check the "left" side of the dict
+        if set(value.keys()).intersection(set(self.superActivities.keys())):
+            value = self.nestingUpdate(value)
+
+        # We check the right further nesting 
+        
+        if new_set.intersection(set(self.superActivities.keys())):
+            value = self.nestingUpdate(value)
+        
         return value
     # Keys are the super activities, and they point to a set (which contains their)
     # sub activities

@@ -20,6 +20,9 @@ class ExtendedSemantics(DcrSemantics):
             # discard any subevents in those activties
                 #if graph.includes[e_prime]
                 res.discard(e_prime)
+        # Discard each superActivity from the res
+        for super_activity in graph.superActivities.keys():
+            res.discard(super_activity)
         return res
 
     @classmethod
