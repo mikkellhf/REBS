@@ -90,17 +90,19 @@ class ExtendedDcrGraph(DistributedDcrGraph):
                     # Add the e_prime to the event that conditions the superevent
                 # Remove the condition to the superActivity
                 del value[event]   
+        
         new_set = set()
         for values in value.values():
             new_set.update(values)
+
+        if new_set.intersection(set(self.superActivities.keys())):
+            value = self.nestingUpdate(value)
+        
         # Check for any further nesting, we check the "left" side of the dict
         if set(value.keys()).intersection(set(self.superActivities.keys())):
             value = self.nestingUpdate(value)
 
         # We check the right further nesting 
-        
-        if new_set.intersection(set(self.superActivities.keys())):
-            value = self.nestingUpdate(value)
         
         return value
     # Keys are the super activities, and they point to a set (which contains their)
@@ -119,7 +121,7 @@ class ExtendedDcrGraph(DistributedDcrGraph):
     
     @milestones.setter
     def milestones(self, value: Dict[str, Set[str]]):
-        self.__milestonesFor = value
+        self.__milestonesFor = self.nestingUpdate(value)
 
     @property
     def noresponses(self) -> Dict[str, Set[str]]:
