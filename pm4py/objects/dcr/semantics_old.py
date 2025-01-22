@@ -10,7 +10,7 @@ Following the schematic as the pm4py, by using definition function and no class 
 """
 
 
-class DcrSemantics(object):
+class DcrSemanticsOld(object):
     """
         the semantics functions implemented is based on the paper by:
 
@@ -73,28 +73,26 @@ class DcrSemantics(object):
         ---------
         :return: DCR graph with updated marking
         """
-        # Make proper checks (we cannot execute any events not in graph.enabled)
-        if event in cls.enabled(graph):
 
-            # each event is called for execution is called
-            if event in graph.marking.pending:
-                graph.marking.pending.discard(event)
-            graph.marking.executed.add(event)
-            
-            # the following if statements are used to provide to update DCR graph
-            # depending on prime event structure within conditions relations
-            if event in graph.excludes:
-                for e_prime in graph.excludes[event]:
-                    graph.marking.included.discard(e_prime)
+        # each event is called for execution is called
+        if event in graph.marking.pending:
+            graph.marking.pending.discard(event)
+        graph.marking.executed.add(event)
+        
+        # the following if statements are used to provide to update DCR graph
+        # depending on prime event structure within conditions relations
+        if event in graph.excludes:
+            for e_prime in graph.excludes[event]:
+                graph.marking.included.discard(e_prime)
 
-            if event in graph.includes:
-                for e_prime in graph.includes[event]:
-                    graph.marking.included.add(e_prime)
+        if event in graph.includes:
+            for e_prime in graph.includes[event]:
+                graph.marking.included.add(e_prime)
 
-            if event in graph.responses:
-                for e_prime in graph.responses[event]:
-                    graph.marking.pending.add(e_prime)
-    
+        if event in graph.responses:
+            for e_prime in graph.responses[event]:
+                graph.marking.pending.add(e_prime)
+
         return graph
 
     @classmethod

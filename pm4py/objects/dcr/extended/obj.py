@@ -23,6 +23,8 @@ from typing import Dict, Set
 
 from pm4py.objects.dcr.distributed.obj import DistributedDcrGraph
 from pm4py.objects.dcr.obj import DcrGraph
+from pm4py.objects.dcr.obj import Marking
+
 
 class ExtendedDcrGraph(DistributedDcrGraph):
     """
@@ -63,7 +65,7 @@ class ExtendedDcrGraph(DistributedDcrGraph):
     @DcrGraph.includes.setter
     def includes(self, value: Dict[str, Set[str]]):          
         self._DcrGraph__includesTo = self.nestingUpdate(value)
-    
+
     @DcrGraph.responses.setter
     def responses(self, value: Dict[str, Set[str]]):          
         self._DcrGraph__responseTo = self.nestingUpdate(value)
@@ -71,6 +73,8 @@ class ExtendedDcrGraph(DistributedDcrGraph):
     @DcrGraph.excludes.setter
     def excludes(self, value: Dict[str, Set[str]]):          
         self._DcrGraph__excludesTo = self.nestingUpdate(value)
+
+    
     
     def nestingUpdate(self, value: Dict[str, Set[str]]):
         # Loop over keys (Condition to key from value)
@@ -94,6 +98,7 @@ class ExtendedDcrGraph(DistributedDcrGraph):
         new_set = set()
         for values in value.values():
             new_set.update(values)
+        # We check the right further nesting 
 
         if new_set.intersection(set(self.superActivities.keys())):
             value = self.nestingUpdate(value)
@@ -102,11 +107,12 @@ class ExtendedDcrGraph(DistributedDcrGraph):
         if set(value.keys()).intersection(set(self.superActivities.keys())):
             value = self.nestingUpdate(value)
 
-        # We check the right further nesting 
         
         return value
     # Keys are the super activities, and they point to a set (which contains their)
     # sub activities
+    
+        
     @property 
     def superActivities(self) -> Dict[str, Set[str]]:
         return self.__superActivities
@@ -130,6 +136,8 @@ class ExtendedDcrGraph(DistributedDcrGraph):
     @noresponses.setter
     def noresponses(self, value: Dict[str, Set[str]]):
         self.__noResponseTo = value
+
+    
 
     def get_constraints(self) -> int:
         no = super().get_constraints()
